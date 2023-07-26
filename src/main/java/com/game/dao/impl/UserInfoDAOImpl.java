@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.game.common.DBCon;
 
+
 public class UserInfoDAOImpl implements UserInfoDAO {
 
 	
@@ -56,7 +57,7 @@ public class UserInfoDAOImpl implements UserInfoDAO {
 	public Map<String, String> selectUserInfo(String uiNum) {
 			// TODO Auto-generated method stub
 			String sql ="SELECT UI_NUM,UI_NAME,UI_ID,UI_PWD,UI_IMG_PATH,UI_DESC,\r\n"
-					+ "UI_BIRTH,CREDAT,CRETIM,LMODAT,LMOTIM \r\n"
+					+ "DATE_FORMAT(UI_BIRTH,'%Y-%m-%d')UI_BIRTH,CREDAT,CRETIM,LMODAT,LMOTIM \r\n"
 					+ ",ACTIVE FROM USER_INFO\r\n"
 			         +"WHERE UI_NUM=?";
 			try(Connection con =DBCon.getCon()){
@@ -150,37 +151,79 @@ public class UserInfoDAOImpl implements UserInfoDAO {
 	}
 
 	@Override
-	public int deleteUserInfo(Map<String, String> userInfo) {
-		// TODO Auto-generated method stub
-		String sql="DELETE FROM user_info WHERE UI_NUM=?";
-		try(Connection con =DBCon.getCon()){
-			try(PreparedStatement ps =con.prepareStatement(sql)){
-				ps.setString(1,userInfo.get("uiNum"));
-					return ps.executeUpdate();
+	public int deleteUserInfo(String uiNum) {
+		String sql = "DELETE FROM USER_INFO WHERE UI_NUM=?";
+		try(Connection con = DBCon.getCon()){
+			try(PreparedStatement ps = con.prepareStatement(sql)){
+				ps.setString(1,uiNum);
+				return ps.executeUpdate();
 			}
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
-		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		return 0;
 	}
-public static void main(String[] args) {
-	UserInfoDAOImpl uRepo=new UserInfoDAOImpl();
-	System.out.println(uRepo.selectUserInfoList(null));
-	System.out.println(uRepo. selectUserInfo("1"));
-	Map<String,String> user =new HashMap();
-	user.put("uiName","이");
-	user.put("uiId","hhh");
-	user.put("uiPwd","qws");
-	user.put("uiImgPath","rq");
-	user.put("uiDesc","rr");
-	user.put("uiBirth","NULL");
-	user.put("uiNum","1");
-	System.out.println(uRepo.deleteUserInfo(user));
+
+	public static void main(String[] args) {
+		UserInfoDAO uiDAO = new UserInfoDAOImpl();
+		Map<String,String> map = new HashMap<>();
+		map.put("uiName", "test");
+		map.put("uiId", "test");
+		map.put("uiPwd", "test");
+		map.put("uiDesc", "test");
+		map.put("uiBirth", "20100510");
+		List<Map<String,String>> userInfoList = uiDAO.selectUserInfoList(null);
+		for(Map<String,String> userInfo : userInfoList) {
+			System.out.println(userInfo);
+		}
+		Map<String,String> userInfo = uiDAO.selectUserInfo("1");
+		System.out.println(userInfo);
+		userInfo.put("uiName", "updateTest");
+		int result = uiDAO.updateUserInfo(userInfo);
+		System.out.println(result);
+		userInfo = uiDAO.selectUserInfo("1");
+		System.out.println(userInfo);
+		result = uiDAO.deleteUserInfo("1");
+		System.out.println(result);
+	}
+
+	@Override
+	public Map<String, String> selectUserInfoById(String uiId)	{
+	String sql ="SELECT UI_NUM,UI_NAME,UI_ID,UI_PWD,UI_IMG_PATH,UI_DESC,\r\n"
+			+ "DATE_FORMAT(UI_BIRTH,'%Y-%m-%d')UI_BIRTH,CREDAT,CRETIM,LMODAT,LMOTIM \r\n"
+			+ ",ACTIVE FROM USER_INFO\r\n"
+	         +"WHERE UI_ID=?";
+	try(Connection con =DBCon.getCon()){
+		try(PreparedStatement ps =con.prepareStatement(sql)){
+			ps.setString(1, uiId);
+			try(ResultSet rs=ps.executeQuery()){
+				while(rs.next()) {
+					Map<String,String> ui =new HashMap<>();
+					ui.put("uiNum",rs.getString("UI_NUM"));
+					ui.put("uiName", rs.getString("UI_NAME"));
+					ui.put("uiId", rs.getString("UI_ID"));
+					ui.put("uiPwd", rs.getString("UI_PWD"));
+					ui.put("uiImgPath", rs.getString("UI_IMG_PATH"));
+					ui.put("uiDesc", rs.getString("UI_DESC"));
+					ui.put("uiBirth", rs.getString("UI_BIRTH"));
+					ui.put("credat", rs.getString("CREDAT"));
+					ui.put("cretim", rs.getString("CRETIM"));
+					ui.put("lmodat", rs.getString("LMODAT"));
+					ui.put("lmotim", rs.getString("LMOTIM"));
+					ui.put("active", rs.getString("ACTIVE"));
+					return ui;
+				}
+			}
+				
+			}
+			
+		}catch(Exception e) {
+	}
 	
+	
+	return null;
 }
+
 
 
 }
