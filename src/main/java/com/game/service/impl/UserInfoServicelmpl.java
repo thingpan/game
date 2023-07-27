@@ -5,12 +5,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import com.game.dao.impl.UserInfoDAO;
-import com.game.dao.impl.UserInfoDAOImpl;
+import com.game.dao.UserInfoDAO;
+import com.game.dao.lmpl.UserInfoDAOImpl;
 import com.game.service.UserInfoService;
 
 public class UserInfoServicelmpl implements UserInfoService {
-    private UserInfoDAO uiDAO =new UserInfoDAOImpl();
+	private UserInfoDAO uiDAO = new UserInfoDAOImpl();
+
 	@Override
 	public List<Map<String, String>> selectUserInfoList(Map<String, String> userInfo) {
 		// TODO Auto-generated method stub
@@ -42,18 +43,7 @@ public class UserInfoServicelmpl implements UserInfoService {
 	}
 
 	@Override
-	public boolean login(Map<String, String> userInfo, HttpSession session) {
-		// TODO Auto-generated method stub
-		String uiId=userInfo.get("uiId");
-		Map<String,String>tmp =uiDAO.selectUserInfo(uiId);
-		if(tmp!=null) {
-			String uiPwd =tmp.get("uiPwd");
-			if(uiPwd.equals(userInfo.get("uiPwd"))) {
-				session.setAttribute("user", tmp);
-				return true;
-			}
-		}
-		return false;
+	public Map<String, String> login(String uiId) {
+		return uiDAO.selectUserInfoById(uiId);
 	}
-
 }

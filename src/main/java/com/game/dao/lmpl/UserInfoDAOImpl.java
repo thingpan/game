@@ -1,4 +1,4 @@
-package com.game.dao.impl;
+package com.game.dao.lmpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.game.common.DBCon;
+import com.game.dao.UserInfoDAO;
 
 
 public class UserInfoDAOImpl implements UserInfoDAO {
