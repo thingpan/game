@@ -18,9 +18,63 @@ public class BoardInfoImpl implements BoardInfdoDao {
 	public List<Map<String, String>> selectboardInfoList(Map<String, String> boardInfo) {
 		// TODO Auto-generated method stub
 		List<Map<String, String>> boardInfoList = new ArrayList<Map<String, String>>();
-		String sql = "SELECT * FROM BOARD_INFO";
+		String sql = "SELECT BI.*,UI.UI_NAME FROM board_info BI\r\n" + "INNER JOIN user_info UI\r\n"
+				+ "ON BI.UI_NUM =UI.UI_NUM WHERE 1=1 ";
+		if (boardInfo != null) {
+			String key = boardInfo.get("key");
+
+			if ("1".equals(key)) {
+				sql += "AND BI_TITLE LIKE CONCAT('%',?,'%')";
+			} else if ("2".equals(key)) {
+				sql += "AND UI_NAME LIKE CONCAT('%',?,'%')";
+			} else if ("3".equals(key)) {
+				sql += "AND BI_CONTENT LIKE CONCAT('%',?,'%')";
+			} else if ("4".equals(key)) {
+				sql += " AND (BI_TITLE LIKE CONCAT('%',?,'%')";
+				sql += " OR BI_CONTENT LIKE CONCAT('%',?,'%'))";
+			} else if ("5".equals(key)) {
+				sql += "AND (UI_NAME LIKE CONCAT('%',?,'%')";
+				sql += " OR BI_CONTENT LIKE CONCAT('%',?,'%'))";
+			} else if ("6".equals(key)) {
+				sql += "AND (UI_NAME LIKE CONCAT('%',?,'%')";
+				sql += " OR BI_TITLE LIKE CONCAT('%',?,'%'))";
+			} else if ("7".equals(key)) {
+				sql += "AND (BI_TITLE LIKE CONCAT('%',?,'%')";
+				sql += " OR UI_NAME LIKE CONCAT('%',?,'%')";
+				sql += " OR BI_CONTENT LIKE CONCAT('%',?,'%'))";
+			}
+
+		}
 		try (Connection con = DBCon.getCon()) {
 			try (PreparedStatement ps = con.prepareStatement(sql)) {
+				if (boardInfo != null) {
+					String key = boardInfo.get("key");
+					if ("1".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+					} else if ("1".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+					} else if ("2".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+					} else if ("3".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+					} else if ("4".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+						ps.setString(2, boardInfo.get("value"));
+					} else if ("4".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+						ps.setString(2, boardInfo.get("value"));
+					} else if ("5".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+						ps.setString(2, boardInfo.get("value"));
+					} else if ("6".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+						ps.setString(2, boardInfo.get("value"));
+					} else if ("7".equals(key)) {
+						ps.setString(1, boardInfo.get("value"));
+						ps.setString(2, boardInfo.get("value"));
+						ps.setString(3, boardInfo.get("value"));
+					}
+				}
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						Map<String, String> ui = new HashMap<>();
@@ -28,6 +82,7 @@ public class BoardInfoImpl implements BoardInfdoDao {
 						ui.put("biTitle", rs.getString("BI_TITLE"));
 						ui.put("biContent", rs.getString("BI_CONTENT"));
 						ui.put("uiNum", rs.getString("UI_NUM"));
+						ui.put("uiName", rs.getString("UI_NAME"));
 						ui.put("credat", rs.getString("CREDAT"));
 						ui.put("cretim", rs.getString("CRETIM"));
 						ui.put("lmodat", rs.getString("LMODAT"));
@@ -42,6 +97,7 @@ public class BoardInfoImpl implements BoardInfdoDao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return boardInfoList;
 	}
 

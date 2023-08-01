@@ -44,7 +44,15 @@ public class BoardInfoServlet extends HttpServlet {
 		}
 		String cmd = CommonView.getCmd(request);
 		if ("list".equals(cmd)) {
-			List<Map<String, String>> boardInfoList = biService.selectboardInfoList(null);
+			Map<String,String> param=null; 
+			if(request.getParameter("searchType")!= null){
+			param=new HashMap<>();
+			String key =request.getParameter("searchType");
+			String vaule=request.getParameter("searchStr");
+			param.put("key", key);
+			param.put("value", vaule);
+			}
+			List<Map<String, String>> boardInfoList = biService.selectboardInfoList(param);
 			request.setAttribute("boardInfoList", boardInfoList);
 		} else if ("view".equals(cmd) || "update".equals(cmd)) {
 			String biNum = request.getParameter("biNum");
